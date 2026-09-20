@@ -1,0 +1,27 @@
+[project]
+name = "discovery-insight-engine"
+version = "0.1.0"
+description = "Network Discovery Insight Engine — AI-powered product decision support for IP Fabric"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [{name = "Ranaji Deb"}]
+
+dependencies = [
+    "ipfabric>=8.0",
+    "streamlit>=1.38",
+    "pandas>=2.0",
+    "plotly>=5.18",
+    "openai>=1.40",
+    "python-dotenv>=1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.5",
+    "pytest>=8.0",
+]
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"

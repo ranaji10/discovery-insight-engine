@@ -1,0 +1,10 @@
+[
+  {"siteName":"HQ-DC1","devCount":7,"id":"site-001"},
+  {"siteName":"HQ-DC2","devCount":5,"id":"site-002"},
+  {"siteName":"HQ-Floor1","devCount":4,"id":"site-003"},
+  {"siteName":"HQ-Floor2","devCount":2,"id":"site-004"},
+  {"siteName":"Branch-London","devCount":3,"id":"site-005"},
+  {"siteName":"Branch-Berlin","devCount":3,"id":"site-006"},
+  {"siteName":"Branch-Paris","devCount":4,"id":"site-007"},
+  {"siteName":"Branch-Madrid","devCount":1,"id":"site-008"}
+]

@@ -1,0 +1,20 @@
+[
+  {
+    "id": "a1b2c3d4-0001-4000-a000-000000000001",
+    "name": "Snapshot 2026-09-13",
+    "state": "loaded",
+    "start": "2026-09-13T02:00:00Z",
+    "end": "2026-09-13T02:45:00Z",
+    "device_count": 147,
+    "licensed_count": 147
+  },
+  {
+    "id": "a1b2c3d4-0002-4000-a000-000000000002",
+    "name": "Snapshot 2026-09-20",
+    "state": "loaded",
+    "start": "2026-09-20T02:00:00Z",
+    "end": "2026-09-20T02:52:00Z",
+    "device_count": 153,
+    "licensed_count": 153
+  }
+]

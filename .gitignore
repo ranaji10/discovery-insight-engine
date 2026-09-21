@@ -27,3 +27,4 @@ Thumbs.db
 
 # Streamlit
 .streamlit/secrets.toml
+.backup_pre_live/

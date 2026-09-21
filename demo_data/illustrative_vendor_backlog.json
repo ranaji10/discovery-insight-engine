@@ -1,0 +1,8 @@
+[
+ {"request": "Arista EOS 4.31 EVPN multi-homing tables", "type": "CLI", "reach": 8, "model_impact": 9, "stability": 8, "requests": 6, "note": "Illustrative"},
+ {"request": "GCP hierarchical firewall policies", "type": "Cloud API", "reach": 7, "model_impact": 8, "stability": 9, "requests": 5, "note": "Illustrative"},
+ {"request": "Azure Virtual WAN route tables", "type": "Cloud API", "reach": 7, "model_impact": 8, "stability": 8, "requests": 6, "note": "Illustrative"},
+ {"request": "Palo Alto PAN-OS 11.1 dynamic address groups", "type": "CLI/API", "reach": 8, "model_impact": 7, "stability": 7, "requests": 7, "note": "Illustrative"},
+ {"request": "FortiSwitch via FortiLink", "type": "API", "reach": 6, "model_impact": 6, "stability": 6, "requests": 4, "note": "Illustrative"},
+ {"request": "Enterasys SecureStack 6.81 (end of life)", "type": "CLI/SNMPv1", "reach": 2, "model_impact": 3, "stability": 2, "requests": 3, "note": "Illustrative"}
+]

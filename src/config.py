@@ -8,12 +8,21 @@ from dotenv import load_dotenv
 
 _ENV_PATH = Path(__file__).resolve().parent.parent / ".env"
 
+DEFAULT_MODEL = "google/gemini-2.5-flash"
+
 
 class Settings:
-    """Application settings dynamically reflecting environment variables."""
+    """Application settings.
+
+    DATA_MODE:
+      - "live"      connect to an IP Fabric instance (IPF_URL / IPF_TOKEN) and read the selected snapshot.
+      - "recorded"  read a JSON export previously recorded from a live IP Fabric snapshot (demo_data/recorded/).
+                    Used for the hosted version, which cannot reach a local IP Fabric appliance.
+      ("demo" is accepted as an alias for "recorded".)
+    """
 
     def __init__(self):
-        load_dotenv(_ENV_PATH, override=True)
+        load_dotenv(_ENV_PATH, override=False)
 
     @property
     def ipf_url(self) -> str:
@@ -33,11 +42,12 @@ class Settings:
 
     @property
     def openrouter_model(self) -> str:
-        return os.getenv("OPENROUTER_MODEL", "antigravity/gemini-3.7-flash-tiered")
+        return os.getenv("OPENROUTER_MODEL", DEFAULT_MODEL)
 
     @property
     def data_mode(self) -> str:
-        return os.getenv("DATA_MODE", "demo").lower()
+        mode = os.getenv("DATA_MODE", "live").lower()
+        return "recorded" if mode == "demo" else mode
 
     @property
     def is_live(self) -> bool:
@@ -49,4 +59,3 @@ class Settings:
 
 
 settings = Settings()
-

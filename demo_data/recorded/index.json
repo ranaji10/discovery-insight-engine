@@ -1,0 +1,26 @@
+[
+ {
+  "id": "48ea238d-a49b-43c7-a97f-855aebf0e4d2",
+  "name": "S02 - Day 2 - Azure",
+  "status": "done",
+  "device_count": 85,
+  "start": "2022-01-27T11:59:40.170000+00:00",
+  "recorded_at": "2026-09-21T13:23:31.472871+00:00"
+ },
+ {
+  "id": "22fc2140-b1d2-433d-87d7-e26c67b52f1d",
+  "name": "S02 - Day 3 - Azure via backup",
+  "status": "done",
+  "device_count": 85,
+  "start": "2022-01-27T11:59:40.170000+00:00",
+  "recorded_at": "2026-09-21T13:24:21.868988+00:00"
+ },
+ {
+  "id": "d323b197-35bb-41e5-9a42-d4de9b38ccaa",
+  "name": "NFD - Day 0 pre-acquisition",
+  "status": "done",
+  "device_count": 67,
+  "start": "2022-01-26T22:59:15.816000+00:00",
+  "recorded_at": "2026-09-21T13:32:18.792404+00:00"
+ }
+]

@@ -1,103 +1,38 @@
-"""
-Discovery Run Diagnostics & Fidelity Comparator.
-
-Compares discovery fidelity, command failure patterns, normalization coverage,
-and seed traversal health between two IP Fabric snapshots.
-"""
+"""Compare two snapshot bundles (see data.load_bundle): what discovery found differently between runs."""
 
 from __future__ import annotations
 
-import pandas as pd
+from collections import Counter
+
+from src import data
 
 
-def compare_discovery_runs(
-    df_a: pd.DataFrame,
-    df_b: pd.DataFrame,
-    diagnostics: list[dict] | None = None,
-    key: str = "hostname",
-) -> dict:
-    """
-    Compare discovery fidelity and normalization quality between two discovery snapshots.
+def compare_bundles(a: dict, b: dict) -> dict:
+    """a = baseline, b = current."""
+    da = {d["sn"]: d for d in a["devices"]}
+    db = {d["sn"]: d for d in b["devices"]}
+    added = [db[s] for s in db.keys() - da.keys()]
+    removed = [da[s] for s in da.keys() - db.keys()]
 
-    Args:
-        df_a: Baseline snapshot devices
-        df_b: Current snapshot devices
-        diagnostics: List of diagnostic failure logs
-        key: Unique device identifier column
+    cov_a, cov_b = data.coverage(a), data.coverage(b)
+    cat_a = Counter(t["category"] for t in a["tasks"])
+    cat_b = Counter(t["category"] for t in b["tasks"])
+    cats = sorted(set(cat_a) | set(cat_b))
 
-    Returns:
-        Structured fidelity and diagnostic diff dict
-    """
-    if df_a.empty and df_b.empty:
-        return {"stats": {}, "fidelity": {}, "diagnostics": []}
-
-    hosts_a = set(df_a[key].dropna().unique()) if key in df_a.columns else set()
-    hosts_b = set(df_b[key].dropna().unique()) if key in df_b.columns else set()
-
-    added = sorted(hosts_b - hosts_a)
-    removed = sorted(hosts_a - hosts_b)
-    common = hosts_a & hosts_b
-
-    # Calculate Normalization Rates
-    def calc_norm_rates(df: pd.DataFrame) -> dict:
-        if df.empty:
-            return {"l2": 0.0, "l3": 0.0, "sec": 0.0, "overall": 0.0}
-        l2 = float(df["l2_normalized"].mean() * 100) if "l2_normalized" in df.columns else 92.0
-        l3 = float(df["l3_normalized"].mean() * 100) if "l3_normalized" in df.columns else 88.0
-        sec = float(df["sec_normalized"].mean() * 100) if "sec_normalized" in df.columns else 78.0
-        overall = (l2 + l3 + sec) / 3.0
-        return {"l2": round(l2, 1), "l3": round(l3, 1), "sec": round(sec, 1), "overall": round(overall, 1)}
-
-    norm_a = calc_norm_rates(df_a)
-    norm_b = calc_norm_rates(df_b)
-
-    # Failed tasks
-    failed_a = len(df_a[df_a["taskKey"] == "failed"]) if "taskKey" in df_a.columns else 0
-    failed_b = len(df_b[df_b["taskKey"] == "failed"]) if "taskKey" in df_b.columns else 0
-
-    # Group diagnostics by error category
-    diag_list = diagnostics or []
-    cat_counts: dict[str, int] = {}
-    site_failures: dict[str, int] = {}
-    for d in diag_list:
-        cat = d.get("errorCategory", "Unknown")
-        site = d.get("siteName", "Unknown")
-        cat_counts[cat] = cat_counts.get(cat, 0) + 1
-        site_failures[site] = site_failures.get(site, 0) + 1
+    failed_a = {t["ip"] for t in a["tasks"] if t["category"] in ("Authentication failed", "Connection timed out", "Connection refused")}
+    failed_b = {t["ip"] for t in b["tasks"] if t["category"] in ("Authentication failed", "Connection timed out", "Connection refused")}
 
     return {
-        "added_devices": added,
-        "removed_devices": removed,
-        "stats": {
-            "total_a": len(hosts_a),
-            "total_b": len(hosts_b),
-            "net_change": len(hosts_b) - len(hosts_a),
-            "failed_tasks_a": failed_a,
-            "failed_tasks_b": failed_b,
-            "failed_tasks_delta": failed_b - failed_a,
-        },
-        "normalization_a": norm_a,
-        "normalization_b": norm_b,
-        "normalization_delta": {
-            "l2": round(norm_b["l2"] - norm_a["l2"], 1),
-            "l3": round(norm_b["l3"] - norm_a["l3"], 1),
-            "sec": round(norm_b["sec"] - norm_a["sec"], 1),
-            "overall": round(norm_b["overall"] - norm_a["overall"], 1),
-        },
-        "diagnostic_breakdown": {
-            "by_category": cat_counts,
-            "by_site": site_failures,
-            "total_diagnosed_failures": len(diag_list),
-        },
-        "diagnostics": diag_list,
+        "baseline": a["meta"]["name"],
+        "current": b["meta"]["name"],
+        "device_count": (len(da), len(db)),
+        "added": [{"hostname": d["hostname"], "siteName": d["siteName"], "vendor": d["vendor"],
+                   "platform": d.get("platform"), "loginType": d.get("loginType")} for d in added],
+        "removed": [{"hostname": d["hostname"], "siteName": d["siteName"], "vendor": d["vendor"],
+                     "platform": d.get("platform")} for d in removed],
+        "coverage": {dom: (cov_a[dom]["rate"], cov_b[dom]["rate"]) for dom in cov_a},
+        "task_categories": [{"category": c, "baseline": cat_a.get(c, 0), "current": cat_b.get(c, 0),
+                             "change": cat_b.get(c, 0) - cat_a.get(c, 0)} for c in cats],
+        "new_failures": sorted(failed_b - failed_a),
+        "resolved_failures": sorted(failed_a - failed_b),
     }
-
-
-def compare_device_inventories(
-    df_a: pd.DataFrame,
-    df_b: pd.DataFrame,
-    key: str = "hostname",
-) -> dict:
-    """Legacy helper for basic inventory diffing."""
-    return compare_discovery_runs(df_a, df_b, key=key)
-

@@ -3,7 +3,7 @@ name = "discovery-insight-engine"
 version = "0.1.0"
 description = "Network Discovery Insight Engine — AI-powered product decision support for IP Fabric"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.10,<4.0"
 license = {text = "MIT"}
 authors = [{name = "Ranaji Deb"}]
 

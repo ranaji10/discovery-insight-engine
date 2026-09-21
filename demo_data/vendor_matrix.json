@@ -1,0 +1,125 @@
+{
+  "unknown_ouis": [
+    {
+      "oui": "70:B3:D5",
+      "vendor_detected": "IEEE Registration Authority (Private / IoT Sensor)",
+      "observed_mac_count": 42,
+      "sites_present": ["HQ-DC1", "HQ-Floor1"],
+      "impact": "Industrial OT / environmental sensors unmanaged by standard switch discovery",
+      "status": "Candidate for IoT SNMP MIB profile"
+    },
+    {
+      "oui": "00:50:56",
+      "vendor_detected": "VMware ESXi vSwitch",
+      "observed_mac_count": 184,
+      "sites_present": ["HQ-DC1", "HQ-DC2"],
+      "impact": "Virtual switches unmapped without vCenter API connector integration",
+      "status": "Recommend vCenter Connector integration"
+    },
+    {
+      "oui": "F4:03:43",
+      "vendor_detected": "Fortinet Technologies Inc.",
+      "observed_mac_count": 18,
+      "sites_present": ["Branch-London", "Branch-Berlin"],
+      "impact": "FortiSwitch units connected via FortiLink lacking standalone CLI parsers",
+      "status": "Candidate for FortiSwitch API parser"
+    }
+  ],
+  "unparsed_sysdescrs": [
+    {
+      "sysDescr": "Arista Networks EOS version 4.31.3M-2G running on an Arista DCS-7050SX3-48YC12",
+      "vendor": "Arista",
+      "platform": "EOS",
+      "version": "4.31.3M-2G",
+      "devices_affected": 4,
+      "support_tier": "Tier 1 (Supported, Minor regex update for 2G patch string)",
+      "gap": "EVPN VXLAN multicast group state parser requires minor regex update for EOS 4.31+"
+    },
+    {
+      "sysDescr": "Palo Alto Networks PA-5260 series PAN-OS 11.1.3-h2",
+      "vendor": "Palo Alto",
+      "platform": "PAN-OS",
+      "version": "11.1.3-h2",
+      "devices_affected": 2,
+      "support_tier": "Tier 1 (Supported)",
+      "gap": "XML API XML schema v11.1 has new tags for dynamic address groups"
+    },
+    {
+      "sysDescr": "Cisco NX-OS(tm) n9000, Software (nxos64-cs.10.3.4a.M.bin), Version 10.3(4a)",
+      "vendor": "Cisco",
+      "platform": "NX-OS",
+      "version": "10.3(4a)",
+      "devices_affected": 2,
+      "support_tier": "Tier 1 (Supported)",
+      "gap": "show ip ospf neighbor detail changed interface column width"
+    },
+    {
+      "sysDescr": "ExtremeXOS (X690-48t-4q-2c) version 32.4.1.5",
+      "vendor": "Extreme Networks",
+      "platform": "ExtremeXOS",
+      "version": "32.4.1.5",
+      "devices_affected": 3,
+      "support_tier": "Tier 3 (Inventory only — L2/L3 Unparsed)",
+      "gap": "No L2 STP or FDB CLI regex parser implemented for XOS 32.x"
+    }
+  ],
+  "vendor_support_tiers": [
+    {
+      "tier": "Tier 1: Full Graph & Policy",
+      "description": "L1-L4 deterministic topology, BGP/OSPF/EIGRP graphs, VRF, STP, ACL & Security Policy normalization.",
+      "vendors": ["Cisco (IOS, IOS-XE, NX-OS, XR)", "Juniper (Junos)", "Arista (EOS)", "Palo Alto (PAN-OS)", "Fortinet (FortiOS)"]
+    },
+    {
+      "tier": "Tier 2: Inventory & Basic Routing",
+      "description": "Hardware inventory, interfaces, basic routing table, and ARP/MAC forwarding.",
+      "vendors": ["Check Point (Gaia)", "Cisco Meraki (Dashboard API)", "F5 (BIG-IP TMOS)", "Huawei (VRP)"]
+    },
+    {
+      "tier": "Tier 3: SNMP Base & MIB Inventory",
+      "description": "SNMP sysDescr, interface counters, basic serial number & uptime.",
+      "vendors": ["Extreme Networks", "HPE Aruba (ProCurve)", "Dell Force10", "MikroTik RouterOS"]
+    }
+  ],
+  "firmware_gap_backlog": [
+    {
+      "vendor": "Arista",
+      "os": "EOS 4.31+",
+      "feature": "EVPN Symmetric IRB & Multi-Homing",
+      "customer_votes": 28,
+      "complexity": "Medium (Regex & Schema)",
+      "priority": "P0"
+    },
+    {
+      "vendor": "Palo Alto",
+      "os": "PAN-OS 11.1+",
+      "feature": "Cloud-Delivered Security Policy & DAG Rules",
+      "customer_votes": 22,
+      "complexity": "Medium (XML API)",
+      "priority": "P0"
+    },
+    {
+      "vendor": "Fortinet",
+      "os": "FortiOS 7.4+",
+      "feature": "SD-WAN Overlay Health & BGP per-overlay",
+      "customer_votes": 19,
+      "complexity": "High (CLI + REST API)",
+      "priority": "P1"
+    },
+    {
+      "vendor": "Cisco",
+      "os": "IOS-XE 17.12+",
+      "feature": "Catalyst Center SD-Access LISP/VXLAN",
+      "customer_votes": 16,
+      "complexity": "High (Telemetry + CLI)",
+      "priority": "P1"
+    },
+    {
+      "vendor": "Extreme Networks",
+      "os": "ExtremeXOS 32.x",
+      "feature": "Full L2/L3 Graph Normalization",
+      "customer_votes": 6,
+      "complexity": "High (New CLI TextFSM suite)",
+      "priority": "P2"
+    }
+  ]
+}

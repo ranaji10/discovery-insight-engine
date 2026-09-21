@@ -31,25 +31,27 @@ def _get_client():
     """Return a cached IPFClient instance (live mode only)."""
     global _client
     if _client is not None:
-        return _client
+        return _client if _client is not False else None
 
     if not settings.is_live:
-        raise RuntimeError("Cannot create IPFClient in demo mode")
-
-    from ipfabric import IPFClient  # imported lazily so demo mode works without SDK
+        return None
 
     try:
+        from ipfabric import IPFClient  # imported lazily so demo mode works without SDK
+
         _client = IPFClient(
             base_url=settings.ipf_url,
             auth=settings.ipf_token,
             verify=settings.ipf_verify,
-            timeout=5,
+            timeout=3,
         )
         logger.info("Connected to IP Fabric %s (API %s)", _client.hostname, _client.api_version)
         return _client
     except Exception as e:
         logger.warning("Failed to connect to IP Fabric at %s (%s) — falling back to demo mode", settings.ipf_url, e)
+        _client = False
         return None
+
 
 
 # ---------------------------------------------------------------------------
@@ -108,7 +110,8 @@ def get_snapshots() -> list[dict]:
 
 
 def get_devices(snapshot_id: str | None = None) -> pd.DataFrame:
-    """Return device inventory as a DataFrame."""
+    """Return device inventory as a DataFrame with discovery normalization columns."""
+    df = pd.DataFrame()
     if settings.is_live:
         try:
             ipf = _get_client()
@@ -121,11 +124,32 @@ def get_devices(snapshot_id: str | None = None) -> pd.DataFrame:
                 if snapshot_id:
                     kwargs["snapshot_id"] = snapshot_id
                 rows = ipf.inventory.devices.all(**kwargs)
-                return pd.DataFrame(rows)
+                df = pd.DataFrame(rows)
         except Exception as e:
             logger.warning("Error fetching devices from live instance: %s", e)
 
-    return pd.DataFrame(_load_demo("devices"))
+    if df.empty:
+        df = pd.DataFrame(_load_demo("devices"))
+
+    # Ensure normalization and discovery columns exist
+    if not df.empty:
+        if "l2_normalized" not in df.columns:
+            df["l2_normalized"] = df["taskKey"].apply(lambda k: 0.0 if k == "failed" else 1.0)
+        if "l3_normalized" not in df.columns:
+            df["l3_normalized"] = df["taskKey"].apply(lambda k: 0.0 if k == "failed" else 0.95)
+        if "sec_normalized" not in df.columns:
+            df["sec_normalized"] = df["taskKey"].apply(lambda k: 0.0 if k == "failed" else 0.85)
+        if "seed_hop" not in df.columns:
+            df["seed_hop"] = 1
+        if "cred_profile" not in df.columns:
+            df["cred_profile"] = "Corp-TACACS-Prod"
+        if "discovery_duration_sec" not in df.columns:
+            df["discovery_duration_sec"] = 3.5
+        if "parsing_status" not in df.columns:
+            df["parsing_status"] = df["taskKey"].apply(lambda k: "Failed Task" if k == "failed" else "Fully Normalized")
+
+    return df
+
 
 
 def get_sites(snapshot_id: str | None = None) -> pd.DataFrame:
@@ -156,6 +180,30 @@ def get_interfaces(snapshot_id: str | None = None) -> pd.DataFrame:
         return pd.DataFrame(rows)
 
     return pd.DataFrame(_load_demo("interfaces"))
+
+
+def get_diagnostics(snapshot_id: str | None = None) -> list[dict]:
+    """Return task and CLI command diagnostics."""
+    return _load_demo("diagnostics")
+
+
+def get_traversal_metrics(snapshot_id: str | None = None) -> dict:
+    """Return seed traversal, neighbor hop, and credential pool statistics."""
+    path = DEMO_DIR / "traversal.json"
+    if not path.exists():
+        return {}
+    with open(path) as f:
+        return json.load(f)
+
+
+def get_vendor_matrix() -> dict:
+    """Return vendor support matrix, unparsed sysDescrs, and gap analysis backlog."""
+    path = DEMO_DIR / "vendor_matrix.json"
+    if not path.exists():
+        return {}
+    with open(path) as f:
+        return json.load(f)
+
 
 
 def get_os_versions(snapshot_id: str | None = None) -> pd.DataFrame:

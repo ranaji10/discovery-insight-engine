@@ -5,37 +5,45 @@
 
 ---
 
-## Why I Built This
+## Why I Built This: Upstream Collection & Parser Diagnostics
 
-When applying for the **Senior Product Manager – Network Discovery** role, I didn't want to just talk about product frameworks or review requirements on slides. 
+When applying for the **Senior Product Manager – Network Discovery** role, I wanted to anchor my work in the core upstream mandate of IP Fabric:
 
-Network discovery is where IP Fabric earns customer trust: collecting, normalising, and modelling complex network states across vendors. As a PM in this area, the core challenge isn't just pulling raw data—it's **turning technical discovery signals into crisp product decisions and customer value**.
+Network discovery is where IP Fabric earns customer trust: **worker queue scaling, seed traversal, SSH/API command execution, CLI regex parsing, and multi-vendor normalization**. Downstream features (intent verification, drift compliance, conversational network queries) all depend entirely on the fidelity of this upstream collection foundation.
 
-So I decided to get hands-on:
-1. Spun up an **IP Fabric appliance VM** on GCP and ran discovery snapshots across hybrid topologies.
-2. Hooked into IP Fabric’s official **Python SDK (`python-ipfabric` v8.x)** to ingest live discovery data.
-3. Built an **AI-driven decision support prototype** that translates low-level discovery tables into high-level product insights, drift detection, and interactive network reasoning.
+So I built a working decision-support prototype that tackles the daily challenges of a Network Discovery PM:
+1. **Discovery Health & Traversal Scorecard (`Tab 1`):** Ingests live device inventories and tracks normalization completeness across Layer 2, Layer 3, and Security tables, alongside seed reachability and worker queue saturation.
+2. **Discovery Triage & Parsing Diagnostics (`Tab 2`):** Replaces simple task counts with CLI-level root-cause diagnostics (SSH timeouts vs. regex pattern breaks vs. jumphost drops).
+3. **Vendor Support & AI Ingestion Engine (`Tab 3`):** Matches unmanaged MAC OUIs and unparsed `sysDescr` strings against IP Fabric's supported matrix, using AI to digest vendor release notes and generate production CLI commands and named-group regex patterns.
+4. **PM Copilot & Spec Synthesizer (`Tab 4`):** Practical AI for internal product management velocity—synthesizing raw customer requests and vendor API docs into structured Jira Epics with explicit engineering vs. business trade-offs.
+5. **Discovery Engine Assistant (`Tab 5`):** Conversational assistant grounded in discovery telemetry, CLI logs, and regex parser architectures.
 
 ---
 
 ## What the Prototype Explores
 
-The prototype is organized around three practical product problems a Network Discovery PM faces every day:
+### 1. 🏥 Discovery Health & Traversal Scorecard (`Tab 1`)
+* **The Problem:** "Did our discovery run with 100% normalization fidelity, or do we have partial table reads and unreached neighbor hops?"
+* **What I built:** Tracks Layer 2 (STP/VLAN), Layer 3 (Routing/VRF), and Security Policy normalization rates, seed IP hop distribution, credential pool hit rates, and async worker queue saturation.
+* **The AI Layer:** Evaluates normalization completion, identifies bottlenecks, and suggests immediate operational actions (buffer timeouts, credential assignments).
 
-### 1. 🏥 Discovery Health Score (`Tab 1`)
-* **The Customer Problem:** "Did my discovery actually work, or do I have blind spots I don't know about?"
-* **What I built:** A live health scorecard tracking device coverage, vendor distribution, platform diversity, and discovery task failures.
-* **The AI Layer:** Generates an executive-level health summary evaluating discovery completeness, highlighting risk patterns (e.g., single-vendor exposure or unreached subnets), and framing concrete next steps.
+### 2. 🔍 Discovery Triage & Parsing Diagnostics (`Tab 2`)
+* **The Problem:** "Which specific CLI commands failed during discovery, why did they fail, and what regex/timeout patch is required?"
+* **What I built:** A diagnostic inspector displaying failed CLI commands (`show ip route vrf *`, `show cdp neighbors detail`), raw CLI buffer snippets, and root-cause classification.
+* **The AI Layer:** Synthesizes failure patterns across sites (e.g., Jumphost security group drops in Site A vs. Cisco IOS 15.2 regex breaks in Site B) and proposes exact regex and command pagination fixes.
 
-### 2. 📊 Snapshot Drift Detector (`Tab 2`)
-* **The Customer Problem:** "What changed between snapshot A and snapshot B, and what broke our intent?"
-* **What I built:** A deterministic diffing engine between any two discovery snapshots (e.g., comparing a baseline pre-acquisition snapshot against a post-merger cloud rollout).
-* **The AI Layer:** Evaluates new vs. removed vs. modified devices, assesses whether the discovery pipeline captured the change accurately, and provides a product verdict on discovery quality.
+### 3. 🧩 Vendor Support & AI Ingestion Engine (`Tab 3`)
+* **The Problem:** "How do we rapidly support new firmware releases like Arista EOS 4.31, PAN-OS 11.1, or FortiOS 7.4 without weeks of reverse-engineering?"
+* **What I built:** A Vendor & OS Gap Analyzer matching unmanaged OUIs and unparsed `sysDescr` strings against support tiers, paired with an AI Ingestion Engine.
+* **The AI Layer:** Digests vendor release notes and command references to generate:
+  - Required CLI Discovery Command Sequences
+  - Production Regex / TextFSM with named capture groups `(?P<group_name>...)`
+  - Canonical IP Fabric Digital Twin schema mappings
+  - Parser Unit Test mock fixtures
 
-### 3. 💬 Ask Your Network (`Tab 3`)
-* **The Customer Problem:** Network engineers and infrastructure leaders shouldn't have to write complex table queries to get answers about risk, coverage, or drift.
-* **What I built:** An interactive, multi-turn chat interface backed by live snapshot data.
-* **The Product Framing:** Unlike generic chat interfaces, the system prompt frames answers around **business risk, vendor concentration, intent compliance, and roadmap trade-offs**—and supports conversational follow-ups.
+### 4. 🛠️ PM Copilot & Discovery Spec Synthesizer (`Tab 4`)
+* **The Problem:** "How can a Discovery PM turn messy customer feature requests and vendor API docs into crisp technical specifications in minutes?"
+* **What I built:** An AI PM Copilot that synthesizes Jira Epics, technical discovery scopes, and explicit **Product Trade-off Memos (What We Build vs. What We Deliberately Defer)**.
 
 ---
 
@@ -43,66 +51,17 @@ The prototype is organized around three practical product problems a Network Dis
 
 > 📖 **[Read the Full Enterprise PRD Document (PRD.md)](./PRD.md)**
 
-### 1. The Conceptualization Journey
-* **Initial Concept:** An external tool ranking vendor priorities using scraped public reviews (G2, Reddit).
-* **Domain Pivot:** Realized customer trust is rooted in their *own* network data. Pivoted to ingesting live discovery snapshots via IP Fabric's official Python SDK (`python-ipfabric` v8.x).
-* **MCP & AIOps Positioning:** Rather than re-building IP Fabric's built-in MCP server, positioned this as the **decision-support & product-framing layer** that transforms raw telemetry into customer ROI.
-* **Working Software:** Delivered a dual-mode Streamlit prototype running against a live GCP IP Fabric VM instance.
-
-### 2. Product Requirements Matrix
-
-| Area | Feature ID | Core Requirement | Impact on Customer |
-|---|---|---|---|
-| **Discovery Health** | `FR-DH-01` | Ingest live inventory & task states via SDK | Instant visibility into discovery blind spots & unreached subnets |
-| **Health Synthesis** | `FR-DH-03` | AI executive summary & risk ranking | Converts technical failure codes into prioritized engineering actions |
-| **Drift Engine** | `FR-SD-02` | Deterministic cross-snapshot device & attribute diffing | Slashes change-window validation time from 1 hour to < 2 minutes |
-| **AIOps Chat** | `FR-NL-02` | Multi-turn conversational network reasoning | Enables non-CLI stakeholders (CISOs, VPs) to query infrastructure intent |
-| **Data Resiliency** | `FR-DL-01` | Dual-mode architecture (Live SDK + Offline Demo) | Evaluators & customers can explore the product without infrastructure overhead |
-
-### 3. Integration & Evolution Blueprint
-
-| Phase | Milestone | Focus Area |
-|---|---|---|
-| **Phase 1 (Done)** | **Working Proof of Concept** | Streamlit dashboard with live SDK ingestion, drift detection, and multi-turn AI reasoning. |
-| **Phase 2 (Q4)** | **IP Fabric Native Extension** | Package as a containerized app inside IP Fabric’s **Extensions runtime (`/extensions-apps/`)**, correlating with Intent Verification Rules. |
-| **Phase 3 (Q1-Q2)** | **Agentic Self-Healing Discovery** | Proactive credential suggestion for failed discovery tasks, automated webhook-triggered drift digests, and bidirectional NetBox/ServiceNow sync. |
-
----
-
-## How This Fits Into IP Fabric’s Product Architecture
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                 Discovery Insight Engine                    │
-│   🏥 Health Score   │   📊 Snapshot Drift   │   💬 Chat     │
-└───────────────┬─────────────────────┬───────────────────────┘
-                │                     │
-    ┌───────────┴──────────┐   ┌──────┴──────────────┐
-    │  Product Framing &   │   │  OpenRouter LLM     │
-    │  Prompt Orchestration│   │  (Gemini / Claude)  │
-    └───────────┬──────────┘   └─────────────────────┘
-                │
-    ┌───────────┴─────────────────────────────────────┐
-    │            IP Fabric Data Layer                 │
-    │  • Live Mode: python-ipfabric SDK (v8.x)        │
-    │  • Demo Mode: Bundled snapshot fixtures         │
-    │  • Drop-in IP Fabric Extension (/extensions-apps)│
-    └─────────────────────────────────────────────────┘
-```
-
-### Complementing (not duplicating) IP Fabric's MCP Server
-IP Fabric recently released a built-in MCP server (`/mcp` endpoint) that provides AI assistants with access to raw discovery tools (path lookups, BGP state, device tables).
-
-This POC sits **one abstraction layer higher**:
-- **MCP Server:** *"Here is the raw BGP table and list of 67 Cisco devices."*
-- **Discovery Insight Engine:** *"100% of your access layer is concentrated on a single legacy Cisco IOS platform. Here is the operational risk, the blind spots in your branch sites, and what we should prioritise in the next discovery release."*
+### Key Highlights from `PRD.md`:
+- **Product Trade-off Memo & Anti-Roadmap:** Explicitly explains why we deferred real-time streaming telemetry and shallow ping sweeps in favor of deterministic snapshot assurance and deep authenticated state extraction.
+- **50,000-Node Scalability vs. Edge Legacy Hardware:** Framework for prioritizing core queue scalability over bespoke one-off legacy hardware parsers.
+- **Vendor Support Scoring Model:** Multi-factor matrix (40% TAM, 30% Graph Impact, 20% API/CLI Stability, 10% Customer Concentration) for roadmap decisions.
 
 ---
 
 ## Running It Locally
 
 ### Prerequisites
-- Python 3.10+ (tested on Python 3.12)
+- Python 3.10+
 - (Optional) IP Fabric instance + API token (for Live mode)
 - (Optional) OpenRouter API key (for LLM reasoning)
 
@@ -133,10 +92,10 @@ IPF_VERIFY=false
 
 # AI Reasoning Layer
 OPENROUTER_API_KEY=your-openrouter-key
-OPENROUTER_MODEL=google/gemini-2.5-flash
+OPENROUTER_MODEL=antigravity/gemini-3.7-flash-tiered
 
 # Data Mode: "live" (connects to IPF) or "demo" (uses bundled test snapshots)
-DATA_MODE=live
+DATA_MODE=demo
 ```
 
 ### 3. Launch Dashboard
@@ -145,9 +104,6 @@ streamlit run app.py
 ```
 Open `http://localhost:8501` in your browser.
 
----
-
-## Key Product Takeaways & What I'd Build Next
 
 If I were leading the Network Discovery product area at IP Fabric tomorrow, here are three high-conviction roadmap themes this POC reinforced for me:
 

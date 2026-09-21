@@ -3,41 +3,41 @@
 from __future__ import annotations
 
 import os
-from dataclasses import dataclass, field
 from pathlib import Path
-
 from dotenv import load_dotenv
 
-# Load .env from project root
 _ENV_PATH = Path(__file__).resolve().parent.parent / ".env"
-load_dotenv(_ENV_PATH, override=True)
 
 
-@dataclass(frozen=True)
 class Settings:
-    """Immutable application settings."""
+    """Application settings dynamically reflecting environment variables."""
 
-    # IP Fabric
-    ipf_url: str = field(default_factory=lambda: os.getenv("IPF_URL", ""))
-    ipf_token: str = field(default_factory=lambda: os.getenv("IPF_TOKEN", ""))
-    ipf_verify: bool = field(
-        default_factory=lambda: os.getenv("IPF_VERIFY", "true").lower() == "true"
-    )
+    def __init__(self):
+        load_dotenv(_ENV_PATH, override=True)
 
-    # OpenRouter
-    openrouter_api_key: str = field(
-        default_factory=lambda: os.getenv("OPENROUTER_API_KEY", "")
-    )
-    openrouter_model: str = field(
-        default_factory=lambda: os.getenv(
-            "OPENROUTER_MODEL", "antigravity/gemini-3.7-flash-tiered"
-        )
-    )
+    @property
+    def ipf_url(self) -> str:
+        return os.getenv("IPF_URL", "")
 
-    # Data mode
-    data_mode: str = field(
-        default_factory=lambda: os.getenv("DATA_MODE", "demo").lower()
-    )
+    @property
+    def ipf_token(self) -> str:
+        return os.getenv("IPF_TOKEN", "")
+
+    @property
+    def ipf_verify(self) -> bool:
+        return os.getenv("IPF_VERIFY", "true").lower() == "true"
+
+    @property
+    def openrouter_api_key(self) -> str:
+        return os.getenv("OPENROUTER_API_KEY", "")
+
+    @property
+    def openrouter_model(self) -> str:
+        return os.getenv("OPENROUTER_MODEL", "antigravity/gemini-3.7-flash-tiered")
+
+    @property
+    def data_mode(self) -> str:
+        return os.getenv("DATA_MODE", "demo").lower()
 
     @property
     def is_live(self) -> bool:
@@ -49,3 +49,4 @@ class Settings:
 
 
 settings = Settings()
+

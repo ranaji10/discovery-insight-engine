@@ -1,0 +1,77 @@
+{
+  "seed_summary": {
+    "total_seeds_configured": 24,
+    "seeds_reachable": 23,
+    "seeds_unreachable": 1,
+    "reachability_rate_pct": 95.8
+  },
+  "hop_traversal_breakdown": [
+    {"hop": 0, "name": "Hop 0: Seed IPs", "discovered_count": 24, "failed_count": 1, "avg_latency_ms": 110},
+    {"hop": 1, "name": "Hop 1: Direct Neighbors", "discovered_count": 68, "failed_count": 2, "avg_latency_ms": 185},
+    {"hop": 2, "name": "Hop 2: Extended Fabric", "discovered_count": 45, "failed_count": 2, "avg_latency_ms": 290},
+    {"hop": 3, "name": "Hop 3: Edge Access / Branches", "discovered_count": 16, "failed_count": 1, "avg_latency_ms": 440}
+  ],
+  "unreached_neighbor_hops": [
+    {
+      "neighbor_name": "edge-sw-floor3.corp.lan",
+      "detected_by_device": "core-rtr-01",
+      "detected_by_interface": "Gi1/0/24",
+      "neighbor_ip": "10.1.3.1",
+      "protocol": "LLDP",
+      "site": "HQ-Floor3",
+      "unreached_reason": "No matching credential in pool (SSH Auth Failed)",
+      "action": "Add Floor 3 TACACS+ secret to Credential Pool"
+    },
+    {
+      "neighbor_name": "storage-leaf-03",
+      "detected_by_device": "arista-spine-01",
+      "detected_by_interface": "Ethernet48/1",
+      "neighbor_ip": "10.50.10.3",
+      "protocol": "LLDP",
+      "site": "HQ-DC2",
+      "unreached_reason": "SSH Connection refused (Port 22 closed / Management VRF ACL)",
+      "action": "Verify management ACL on storage leaf subnet"
+    },
+    {
+      "neighbor_name": "backup-gw-paris",
+      "detected_by_device": "meraki-sw-01",
+      "detected_by_interface": "Port 48",
+      "neighbor_ip": "10.30.1.254",
+      "protocol": "CDP",
+      "site": "Branch-Paris",
+      "unreached_reason": "Discovery boundary reached (Outside configured IP range 10.30.1.0/24)",
+      "action": "Expand discovery boundary to include 10.30.0.0/20"
+    }
+  ],
+  "unmapped_subnets": [
+    {
+      "subnet": "10.99.0.0/20",
+      "site": "HQ-DC1",
+      "discovered_routes": 14,
+      "discovered_devices": 0,
+      "risk": "Legacy DMZ Subnet with zero device coverage"
+    },
+    {
+      "subnet": "172.24.0.0/16",
+      "site": "Branch-Berlin",
+      "discovered_routes": 8,
+      "discovered_devices": 0,
+      "risk": "Contractor VDI / IoT subnet unpolled"
+    }
+  ],
+  "credential_pool_hit_rates": [
+    {"profile": "Corp-TACACS-Prod", "hits": 112, "pct": 73.2, "status": "Healthy"},
+    {"profile": "Branch-Local-Admin", "hits": 28, "pct": 18.3, "status": "Healthy"},
+    {"profile": "Legacy-SNMPv2c", "hits": 9, "pct": 5.9, "status": "Deprecate for SNMPv3"},
+    {"profile": "Failed (No Valid Auth)", "hits": 4, "pct": 2.6, "status": "Auth Errors"}
+  ],
+  "engine_performance": {
+    "snapshot_duration_seconds": 522,
+    "snapshot_duration_formatted": "8m 42s",
+    "worker_pool_size": 32,
+    "peak_worker_utilization_pct": 68.5,
+    "avg_device_discovery_sec": 3.41,
+    "total_cli_commands_executed": 3412,
+    "total_cli_bytes_parsed_mb": 142.8
+  }
+}
